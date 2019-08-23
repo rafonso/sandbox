@@ -3,12 +3,16 @@
     "use strict";
 })();
 
+let temIntervalos = false;
+
 let audio = {
     _audioContext: null,
     _oscillator: null,
     _gain: null,
     _running: false,
-    start: function (volume, type, frequency) {
+    _tempoAtivo: NaN,
+    _tempoInativo: NaN,
+    start: function (volume, type, frequency, activeTime = NaN, inactiveTime = NaN) {
         console.log("Iniciando");
         this._audioContext = new AudioContext();
         this._oscillator = this._audioContext.createOscillator();
@@ -20,6 +24,9 @@ let audio = {
         this._oscillator.connect(this._gain);
         this._gain.connect(this._audioContext.destination);
         this._oscillator.start(0);
+
+        this._tempoAtivo = activeTime;
+        this._tempoInativo = inactiveTime;
 
         this._running = true;
         console.log("Iniciando");
@@ -57,12 +64,30 @@ let audio = {
     },
     get running() {
         return this._running;
+    },
+    get tempoAtivo() {
+        return this._tempoAtivo;
+    },
+    set tempoAtivo(t) {
+        this._tempoAtivo = t;
+    },
+    get tempoInativo() {
+        return this._tempoInativo;
+    },
+    set tempoInativo(t) {
+        this._tempoInativo = t;
     }
 };
 
 
 function iniciarSom() {
-    audio.start($("#gain").val(), $("#type").val(), $("#frequency").val());
+    audio.start(
+        $("#gain").val(),
+        $("#type").val(),
+        $("#frequency").val(),
+        temIntervalos ? $("#tempoAtivo").val() : NaN,
+        temIntervalos ? $("#tempoInativo").val() : NaN
+    );
 
     $("#btSound").text("Parar");
     $("#btnExibeIntervalos").prop("disabled", true);
@@ -75,24 +100,31 @@ function pararSom() {
     $("#btnExibeIntervalos").prop("disabled", false);
 }
 
+function changeAudioProp(propriedade, event) {
+    if (audio.running) {
+        audio[propriedade] = $(event.currentTarget).val();
+    }
+}
+
 /**
  * 
  * @param {JQuery} control 
  * @param {Event} event 
  * @param {number} decimais 
  */
-function normalizarValor(event, decimais) {
+function initInputNumber(idControl, propriedade, decimais) {
+    let control = $("#" + idControl);
 
-    function valorInteiro(ctrl, delta, sentido) {
-        let newVal = parseInt(ctrl.val()) + sentido * delta;
+    function valorInteiro(delta, sentido) {
+        let newVal = parseInt(control.val()) + sentido * delta;
         return (newVal > 0) ? newVal : 0;
     }
 
-    function valorDecimal(ctrl, delta, sentido) {
-        let newVal = (Math.round((parseFloat(ctrl.val()) + sentido * delta) * 100) / 100).toFixed(decimais);
+    function valorDecimal(delta, sentido) {
+        let newVal = (Math.round((parseFloat(control.val()) + sentido * delta) * 100) / 100).toFixed(decimais);
 
-        if (newVal > parseFloat(ctrl.prop("max"))) {
-            return ctrl.prop("max");
+        if (newVal > parseFloat(control.prop("max"))) {
+            return control.prop("max");
         } else if (newVal < 0) {
             return "0." + "0".repeat(decimais);
         } else if (Number.isInteger(newVal)) {
@@ -101,45 +133,33 @@ function normalizarValor(event, decimais) {
         return newVal;
     }
 
-    let control = $(event.currentTarget);
-    let step = decimais ? parseFloat(control.prop("step")) : parseInt(control.prop("step"));
-    let delta = (event.ctrlKey ? 10 : 1) * step;
-    let sentido = event.deltaY;
-    let conversor = decimais ? valorDecimal : valorInteiro;
-    let newVal = conversor(control, delta, sentido);
-    console.debug(newVal);
+    function onMouseWheel(event) {
+        let step = decimais ? parseFloat(control.prop("step")) : parseInt(control.prop("step"));
+        let delta = (event.ctrlKey ? 10 : 1) * step;
+        let sentido = event.deltaY;
+        let conversor = decimais ? valorDecimal : valorInteiro;
+        let newVal = conversor(delta, sentido);
+        console.debug(newVal);
 
-    control.val(newVal).trigger("change");
-    event.preventDefault();
+        control.val(newVal).trigger("change");
+        event.preventDefault();
+    }
+
+    control
+        .on('change', (event) => changeAudioProp(propriedade, event))
+        .on('mousewheel', event => onMouseWheel(event));
 }
 
 function init() {
     $("#btSound").click(() => audio.running ? pararSom() : iniciarSom());
-    $("#type").on('change', (event) => {
-        if (audio.running) {
-            audio.type = $(event.currentTarget).val();
-        }
-    }).focus();
-    $("#frequency").on('change', (event) => {
-        if (audio.running) {
-            audio.frequency = $(event.currentTarget).val();
-        }
-    }).on('mousewheel', event => normalizarValor(event, 0));
-    $("#gain").on('change', (event) => {
-        if (audio.running) {
-            audio.volume = $(event.currentTarget).val();
-        }
-    }).on('mousewheel', event => normalizarValor(event, 2));
-    $("#tempoAtivo").on('change', (event) => {
-        if (audio.running) {
-            console.debug(event.currentTarget.id, $(event.currentTarget).val());
-        }
-    }).on('mousewheel', event => normalizarValor(event, 1));
-    $("#tempoInativo").on('change', (event) => {
-        if (audio.running) {
-            console.debug(event.currentTarget.id, $(event.currentTarget).val());
-        }
-    }).on('mousewheel', event => normalizarValor(event, 1));
+    $("#type")
+        .on('change', (event) => changeAudioProp("type", event))
+        .focus();
+    initInputNumber("frequency", "frequency", 0);
+    initInputNumber("gain", "volume", 2);
+    $("#btnExibeIntervalos").on('click', () => temIntervalos = !temIntervalos);
+    initInputNumber("tempoAtivo", "tempoAtivo", 1);
+    initInputNumber("tempoInativo", "tempoInativo", 1);
 
     console.info("Audio Pronto!");
 }
