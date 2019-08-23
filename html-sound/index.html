@@ -43,7 +43,7 @@
                 <div class="form-group row col-sm-6 col-12">
                     <label for="type" class="col-3 col-form-label col-form-label-sm">Tipo:</label>
                     <div class="col-9">
-                        <select class="form-control custom-select" id="type">
+                        <select id="type" class="form-control custom-select">
                             <option>sawtooth</option>
                             <option>sine</option>
                             <option>square</option>
@@ -54,21 +54,59 @@
                 <div class="form-group row col-sm-6 col-12">
                     <label for="frequency" class="col-3 col-form-label col-form-label-sm">Frequencia:</label>
                     <div class="col-9">
-                        <input type="number" class="form-control" id="frequency" min="1" max="10000" step="10"
+                        <input id="frequency" type="number" class="form-control" min="1" max="10000" step="10"
                             value="500">
                     </div>
                 </div>
             </div>
             <div class="row">
-                    <div class="form-group row col-sm-6 col-12">
-                <label for="gain" class="col-3 col-form-label col-form-label-sm">Ganho:</label>
-                <div class="col-9">
-                    <input type="number" class="form-control" id="gain" min="0.0" max="1.0" step="0.01" value="0.01">
+                <div class="form-group row col-sm-6 col-12">
+                    <label for="gain" class="col-3 col-form-label col-form-label-sm">Ganho:</label>
+                    <div class="col-9">
+                        <input id="gain" type="number" class="form-control" min="0.0" max="0.20" step="0.01"
+                            value="0.01">
+                    </div>
                 </div>
             </div>
+            <div id="intervalos">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <button id="btnExibeIntervalos" type="button" class="btn btn-link" data-toggle="collapse"
+                                data-target="#controleIntervalos" aria-expanded="true" aria-controls="collapseOne">
+                                Intervalos
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="controleIntervalos" class="collapse hidden" aria-labelledby="headingOne"
+                        data-parent="#accordion">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group row col-sm-6 col-12">
+                                    <label for="tempoAtivo" class="col-3 col-form-label col-form-label-sm">Tempo Ativo
+                                        (s):</label>
+                                    <div class="col-9">
+                                        <input id="tempoAtivo" type="number" class="form-control" min="0" max="10"
+                                            step="0.1" value="1.0">
+                                    </div>
+                                </div>
+                                <div class="form-group row col-sm-6 col-12">
+                                    <label for="tempoInativo" class="col-3 col-form-label col-form-label-sm">Tempo
+                                        Inativo
+                                        (s):</label>
+                                    <div class="col-9">
+                                        <input id="tempoInativo" type="number" class="form-control" min="0" max="10"
+                                            step="0.1" value="0.0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="form-group row align-items-end">
-                    <!-- fixed-bottom -->
+                <!-- fixed-bottom -->
                 <div class="col">
                     <button id="btSound" type="button" class="btn btn-primary btn-lg btn-block float-right"
                         data-toggle="button">Iniciar</button>
