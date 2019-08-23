@@ -76,6 +76,7 @@ $(document).ready(function () {
         $("#gain").val(newVal).trigger("change");
         event.preventDefault();
     });
+    $("#type").focus();
 });
 
 // (Math.round($("#gain").val() * 100) / 100) + event.deltaY * delta
