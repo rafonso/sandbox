@@ -41,8 +41,8 @@
         <form class="" role="form">
             <div class="row">
                 <div class="form-group row col-sm-6 col-12">
-                    <label for="type" class="col-3 col-form-label col-form-label-sm">Tipo:</label>
-                    <div class="col-9">
+                    <label for="type" class="col-4 col-form-label col-form-label-sm text-nowrap">Tipo:</label>
+                    <div class="col-8">
                         <select id="type" class="form-control custom-select">
                             <option>sawtooth</option>
                             <option>sine</option>
@@ -52,8 +52,9 @@
                     </div>
                 </div>
                 <div class="form-group row col-sm-6 col-12">
-                    <label for="frequency" class="col-3 col-form-label col-form-label-sm">Frequencia:</label>
-                    <div class="col-9">
+                    <label for="frequency"
+                        class="col-4 col-form-label col-form-label-sm text-nowrap">Frequencia:</label>
+                    <div class="col-8">
                         <input id="frequency" type="number" class="form-control" min="1" max="10000" step="10"
                             value="500">
                     </div>
@@ -62,15 +63,15 @@
 
             <div class="row">
                 <div class="form-group row col-sm-6 col-12">
-                    <label for="gain" class="col-3 col-form-label col-form-label-sm">Ganho:</label>
-                    <div class="col-9">
+                    <label for="gain" class="col-4 col-form-label col-form-label-sm text-nowrap">Ganho:</label>
+                    <div class="col-8">
                         <input id="gain" type="number" class="form-control" min="0.0" max="0.20" step="0.01"
                             value="0.01">
                     </div>
                 </div>
                 <div class="form-group row col-sm-6 col-12">
-                    <label for="detune" class="col-3 col-form-label col-form-label-sm">Detune:</label>
-                    <div class="col-9">
+                    <label for="detune" class="col-4 col-form-label col-form-label-sm text-nowrap">Detune:</label>
+                    <div class="col-8">
                         <input id="detune" type="number" class="form-control" min="0" max="1000" step="1" value="0">
                     </div>
                 </div>
@@ -91,18 +92,21 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group row col-sm-6 col-12">
-                                    <label for="tempoAtivo" class="col-3 col-form-label col-form-label-sm">Tempo Ativo
+                                    <label for="tempoAtivo"
+                                        class="col-4 col-form-label col-form-label-sm text-nowrap text-break">Tempo
+                                        Ativo
                                         (s):</label>
-                                    <div class="col-9">
+                                    <div class="col-8">
                                         <input id="tempoAtivo" type="number" class="form-control" min="0" max="10"
                                             step="0.1" value="1.0">
                                     </div>
                                 </div>
                                 <div class="form-group row col-sm-6 col-12">
-                                    <label for="tempoInativo" class="col-3 col-form-label col-form-label-sm">Tempo
+                                    <label for="tempoInativo"
+                                        class="col-4 col-form-label col-form-label-sm text-nowrap text-break">Tempo
                                         Inativo
                                         (s):</label>
-                                    <div class="col-9">
+                                    <div class="col-8">
                                         <input id="tempoInativo" type="number" class="form-control" min="0" max="10"
                                             step="0.1" value="0.0">
                                     </div>
