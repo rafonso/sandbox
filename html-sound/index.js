@@ -14,7 +14,7 @@ let audio = {
     _tempoAtivo: NaN,
     _tempoInativo: NaN,
     _ativo: false,
-    start: function (volume, type, frequency, activeTime = NaN, inactiveTime = NaN) {
+    start: function (volume, type, frequency, detune, activeTime = NaN, inactiveTime = NaN) {
         // console.debug("Iniciando");
         this._audioContext = new AudioContext();
         this._oscillator = this._audioContext.createOscillator();
@@ -24,9 +24,10 @@ let audio = {
         this._gain.gain.value = volume;
         this._oscillator.type = type;
         this._oscillator.frequency.value = frequency;
+        this._oscillator.detune = detune;
         this._oscillator.connect(this._gain);
         this._gain.connect(this._audioContext.destination);
-        this._oscillator.start(0);
+        this._oscillator.start();
 
         this._tempoAtivo = activeTime;
         this._tempoInativo = inactiveTime;
@@ -78,6 +79,12 @@ let audio = {
     set frequency(frequency) {
         this._oscillator.frequency.value = frequency;
     },
+    get detune() {
+        return this._oscillator.detune;
+    },
+    set detune(value) {
+        this._oscillator.detune.value = value;
+    },
     get volume() {
         return this._volume;
     },
@@ -110,6 +117,7 @@ function iniciarSom() {
         parseFloat($("#gain").val()).toFixed(2),
         $("#type").val(),
         $("#frequency").val(),
+        $("#detune").val(),
         temIntervalos ? parseFloat($("#tempoAtivo").val()).toFixed(1) : NaN,
         temIntervalos ? parseFloat($("#tempoInativo").val()).toFixed(1) : NaN
     );
@@ -182,6 +190,7 @@ function init() {
         .focus();
     initInputNumber("frequency", "frequency", 0);
     initInputNumber("gain", "volume", 2);
+    initInputNumber("detune", "detune", 0);
     $("#controleIntervalos")
         .on("shown.bs.collapse", () => temIntervalos = true) // console.debug("mostrando")) // 
         .on("hidden.bs.collapse", () => temIntervalos = false); // console.debug("desmostrando")); // 
