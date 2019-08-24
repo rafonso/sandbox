@@ -9,14 +9,17 @@ let audio = {
     _audioContext: null,
     _oscillator: null,
     _gain: null,
+    _volume: 0,
     _running: false,
     _tempoAtivo: NaN,
     _tempoInativo: NaN,
+    _ativo: false,
     start: function (volume, type, frequency, activeTime = NaN, inactiveTime = NaN) {
-        console.log("Iniciando");
+        // console.debug("Iniciando");
         this._audioContext = new AudioContext();
         this._oscillator = this._audioContext.createOscillator();
         this._gain = this._audioContext.createGain();
+        this._volume = volume;
 
         this._gain.gain.value = volume;
         this._oscillator.type = type;
@@ -29,10 +32,15 @@ let audio = {
         this._tempoInativo = inactiveTime;
 
         this._running = true;
-        console.log("Iniciando");
+        this._ativo = true;
+        // console.debug("Iniciado");
+        if (!isNaN(this.tempoAtivo) && !isNaN(this.tempoInativo)) {
+            // console.debug("start", this._volume);
+            setTimeout(() => this._bipar(false), this.tempoAtivo * 1000);
+        }
     },
     stop: function () {
-        console.log("Parando");
+        // console.debug("Parando");
         this._oscillator.stop();
         if (this._audioContext.close) { // MS has not context.close
             this._audioContext.close();
@@ -42,7 +50,21 @@ let audio = {
         this._oscillator = null;
         this._audioContext = null;
         this._running = false;
-        console.log("Parado");
+        this._ativo = false;
+        // console.debug("Parado");
+    },
+    _bipar: function (ativar) {
+        if (!this.running) {
+            return;
+        }
+
+        let vol = ativar ? this.volume : 0;
+        let time = ativar ? this.tempoAtivo : this.tempoInativo;
+
+        this._gain.gain.value = vol;
+        this._ativo = ativar;
+        // console.debug("bipar", vol);
+        setTimeout(() => this._bipar((this.tempoInativo > 0) ? !ativar : true), time * 1000);
     },
     get type() {
         return this._oscillator.type;
@@ -57,10 +79,13 @@ let audio = {
         this._oscillator.frequency.value = frequency;
     },
     get volume() {
-        return this._gain.gain.value;
+        return this._volume;
     },
     set volume(volume) {
-        this._gain.gain.value = volume;
+        this._volume = volume;
+        if (this._ativo) {
+            this._gain.gain.value = volume;
+        }
     },
     get running() {
         return this._running;
@@ -82,11 +107,11 @@ let audio = {
 
 function iniciarSom() {
     audio.start(
-        $("#gain").val(),
+        parseFloat($("#gain").val()).toFixed(2),
         $("#type").val(),
         $("#frequency").val(),
-        temIntervalos ? $("#tempoAtivo").val() : NaN,
-        temIntervalos ? $("#tempoInativo").val() : NaN
+        temIntervalos ? parseFloat($("#tempoAtivo").val()).toFixed(1) : NaN,
+        temIntervalos ? parseFloat($("#tempoInativo").val()).toFixed(1) : NaN
     );
 
     $("#btSound").text("Parar");
@@ -139,7 +164,7 @@ function initInputNumber(idControl, propriedade, decimais) {
         let sentido = event.deltaY;
         let conversor = decimais ? valorDecimal : valorInteiro;
         let newVal = conversor(delta, sentido);
-        console.debug(newVal);
+        // console.debug(newVal);
 
         control.val(newVal).trigger("change");
         event.preventDefault();
@@ -157,11 +182,13 @@ function init() {
         .focus();
     initInputNumber("frequency", "frequency", 0);
     initInputNumber("gain", "volume", 2);
-    $("#btnExibeIntervalos").on('click', () => temIntervalos = !temIntervalos);
+    $("#controleIntervalos")
+        .on("shown.bs.collapse", () => temIntervalos = true) // console.debug("mostrando")) // 
+        .on("hidden.bs.collapse", () => temIntervalos = false); // console.debug("desmostrando")); // 
     initInputNumber("tempoAtivo", "tempoAtivo", 1);
     initInputNumber("tempoInativo", "tempoInativo", 1);
 
-    console.info("Audio Pronto!");
+    // console.info("Audio Pronto!");
 }
 
 $(document).ready(function () {
