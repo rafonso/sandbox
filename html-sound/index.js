@@ -139,6 +139,10 @@ function changeAudioProp(propriedade, event) {
     }
 }
 
+function controlToValue(control, controlValue, decimais) {
+    controlValue.text(parseFloat(control.val()).toFixed(decimais));
+}
+
 /**
  * 
  * @param {JQuery} control 
@@ -147,6 +151,13 @@ function changeAudioProp(propriedade, event) {
  */
 function initInputNumber(idControl, propriedade, decimais) {
     let control = $("#" + idControl);
+    let controlValue = $("#" + idControl + "-value");
+    controlToValue(control, controlValue, decimais);
+
+    function changeNumericProperty(event) {
+        controlToValue(control, controlValue, decimais);
+        changeAudioProp(propriedade, event);
+    }
 
     function valorInteiro(delta, sentido) {
         let newVal = parseInt(control.val()) + sentido * delta;
@@ -178,9 +189,16 @@ function initInputNumber(idControl, propriedade, decimais) {
         event.preventDefault();
     }
 
+    function onMouseMouse(event) {
+        if (event.which === 1) {
+            changeNumericProperty(event);
+        }
+    }
+
     control
-        .on('change', (event) => changeAudioProp(propriedade, event))
-        .on('mousewheel', event => onMouseWheel(event));
+        .on('change', changeNumericProperty)
+        .on('mousemove', onMouseMouse)
+        .on('mousewheel', onMouseWheel);
 }
 
 function init() {
@@ -192,8 +210,8 @@ function init() {
     initInputNumber("gain", "volume", 2);
     initInputNumber("detune", "detune", 0);
     $("#controleIntervalos")
-        .on("shown.bs.collapse", () => temIntervalos = true) // console.debug("mostrando")) // 
-        .on("hidden.bs.collapse", () => temIntervalos = false); // console.debug("desmostrando")); // 
+        .on("shown.bs.collapse", () => temIntervalos = true) 
+        .on("hidden.bs.collapse", () => temIntervalos = false);
     initInputNumber("tempoAtivo", "tempoAtivo", 1);
     initInputNumber("tempoInativo", "tempoInativo", 1);
 
