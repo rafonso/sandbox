@@ -3,6 +3,8 @@
     "use strict";
 })();
 
+const MAX_FATOR = 50;
+
 let temIntervalos = false;
 
 let notasMusicais = [{
@@ -43,9 +45,7 @@ let audio = {
     _running: false,
     _tempoAtivo: NaN,
     _tempoInativo: NaN,
-    _ativo: false,
     start: function (volume, type, frequency, detune, activeTime = NaN, inactiveTime = NaN) {
-        // console.debug("Iniciando");
         this._audioContext = new AudioContext();
         this._oscillator = this._audioContext.createOscillator();
         this._gain = this._audioContext.createGain();
@@ -63,15 +63,11 @@ let audio = {
         this._tempoInativo = inactiveTime;
 
         this._running = true;
-        this._ativo = true;
-        // console.debug("Iniciado");
         if (!isNaN(this.tempoAtivo) && !isNaN(this.tempoInativo)) {
-            // console.debug("start", this._volume);
             setTimeout(() => this._bipar(false), this.tempoAtivo * 1000);
         }
     },
     stop: function () {
-        // console.debug("Parando");
         this._oscillator.stop();
         if (this._audioContext.close) { // MS has not context.close
             this._audioContext.close();
@@ -81,8 +77,6 @@ let audio = {
         this._oscillator = null;
         this._audioContext = null;
         this._running = false;
-        this._ativo = false;
-        // console.debug("Parado");
     },
     _bipar: function (ativar) {
         if (!this.running) {
@@ -93,8 +87,6 @@ let audio = {
         let time = ativar ? this.tempoAtivo : this.tempoInativo;
 
         this._gain.gain.value = vol;
-        this._ativo = ativar;
-        // console.debug("bipar", vol);
         setTimeout(() => this._bipar((this.tempoInativo > 0) ? !ativar : true), time * 1000);
     },
     get type() {
@@ -120,7 +112,7 @@ let audio = {
     },
     set volume(volume) {
         this._volume = volume;
-        if (this._ativo) {
+        if (!!this._gain) {
             this._gain.gain.value = volume;
         }
     },
@@ -140,7 +132,6 @@ let audio = {
         this._tempoInativo = t;
     }
 };
-
 
 function iniciarSom() {
     audio.start(
@@ -213,7 +204,6 @@ function initInputNumber(idControl, propriedade, decimais) {
         let sentido = event.deltaY;
         let conversor = decimais ? valorDecimal : valorInteiro;
         let newVal = conversor(delta, sentido);
-        // console.debug(newVal);
 
         control.val(newVal).trigger("change");
         event.preventDefault();
@@ -239,14 +229,13 @@ function initNotas() {
 
     function alterarFrequencia() {
         let freq = selNotas.val() * selFatorNode.val();
-        // console.debug(freq);
 
         rangeFequencia.off("change", limparNota);
         rangeFequencia.val(freq).trigger("change");
         rangeFequencia.on("change", limparNota);
     }
 
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= MAX_FATOR; i++) {
         selFatorNode.append(`<option value="${i}">${i}</option>`);
     }
     notasMusicais.forEach(n =>
@@ -261,7 +250,7 @@ function initNotas() {
     });
     rangeFequencia
         .on("change", limparNota)
-        .on('mousemove', function (event) {
+        .on('mousemove', (event) => {
             if (event.which === 1) {
                 limparNota();
             }
@@ -282,8 +271,6 @@ function init() {
         .on("hidden.bs.collapse", () => temIntervalos = false);
     initInputNumber("tempoAtivo", "tempoAtivo", 1);
     initInputNumber("tempoInativo", "tempoInativo", 1);
-
-    // console.info("Audio Pronto!");
 }
 
 $(document).ready(function () {
