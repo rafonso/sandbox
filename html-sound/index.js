@@ -5,6 +5,36 @@
 
 let temIntervalos = false;
 
+let notasMusicais = [{
+        name: "Dó",
+        value: 132.0
+    },
+    {
+        name: "Ré",
+        value: 148.5
+    },
+    {
+        name: "Mi",
+        value: 165.0
+    },
+    {
+        name: "Fá",
+        value: 176.0
+    },
+    {
+        name: "Sol",
+        value: 198.0
+    },
+    {
+        name: "Lá",
+        value: 220.0
+    },
+    {
+        name: "Si",
+        value: 247.5
+    },
+];
+
 let audio = {
     _audioContext: null,
     _oscillator: null,
@@ -201,16 +231,54 @@ function initInputNumber(idControl, propriedade, decimais) {
         .on('mousewheel', onMouseWheel);
 }
 
+function initNotas() {
+    let selNotas = $("#note");
+    let selFatorNode = $("#fatorNote");
+    let rangeFequencia = $("#frequency");
+    let limparNota = () => selNotas.val(0);
+
+    function alterarFrequencia() {
+        let freq = selNotas.val() * selFatorNode.val();
+        // console.debug(freq);
+
+        rangeFequencia.off("change", limparNota);
+        rangeFequencia.val(freq).trigger("change");
+        rangeFequencia.on("change", limparNota);
+    }
+
+    for (let i = 1; i <= 20; i++) {
+        selFatorNode.append(`<option value="${i}">${i}</option>`);
+    }
+    notasMusicais.forEach(n =>
+        selNotas.append(`<option value="${n.value}">${n.name} (${n.value.toFixed(1)} Hz)</option>`)
+    );
+
+    selNotas.on("change", alterarFrequencia);
+    selFatorNode.on("change", () => {
+        if (!!selNotas.val()) {
+            alterarFrequencia();
+        }
+    });
+    rangeFequencia
+        .on("change", limparNota)
+        .on('mousemove', function (event) {
+            if (event.which === 1) {
+                limparNota();
+            }
+        });
+}
+
 function init() {
     $("#btSound").click(() => audio.running ? pararSom() : iniciarSom());
     $("#type")
         .on('change', (event) => changeAudioProp("type", event))
         .focus();
     initInputNumber("frequency", "frequency", 0);
+    initNotas();
     initInputNumber("gain", "volume", 2);
     initInputNumber("detune", "detune", 0);
     $("#controleIntervalos")
-        .on("shown.bs.collapse", () => temIntervalos = true) 
+        .on("shown.bs.collapse", () => temIntervalos = true)
         .on("hidden.bs.collapse", () => temIntervalos = false);
     initInputNumber("tempoAtivo", "tempoAtivo", 1);
     initInputNumber("tempoInativo", "tempoInativo", 1);

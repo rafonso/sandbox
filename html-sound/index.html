@@ -31,6 +31,11 @@
         input[type="number"] {
             text-align: right;
         }
+
+        #note option,
+        #fatorNote option {
+            text-align: right;
+        }
     </style>
     <title>Controles de som</title>
 </head>
@@ -51,6 +56,8 @@
                         </select>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="form-group row col-sm-6 col-12">
                     <label for="frequency"
                         class="col-4 col-form-label col-form-label-sm text-nowrap">Frequencia:</label>
@@ -59,6 +66,19 @@
                             step="10" value="500">
                     </div>
                     <label id="frequency-value" class="col-2 col-form-label col-form-label-sm text-nowrap">0</label>
+                </div>
+                <div class="form-group row col-sm-6 col-12">
+                    <label for="note" class="col-4 col-form-label col-form-label-sm text-nowrap">Nota:</label>
+                    <div class="col-4">
+                        <select id="note" class="form-control custom-select">
+                            <option selected></option>
+                        </select>
+                    </div>
+                    <label for="fatorNote" class="col-1 col-form-label col-form-label-sm text-nowrap">X</label>
+                    <div class="col-3">
+                        <select id="fatorNote" class="form-control custom-select">
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -74,7 +94,8 @@
                 <div class="form-group row col-sm-6 col-12">
                     <label for="detune" class="col-4 col-form-label col-form-label-sm text-nowrap">Detune:</label>
                     <div class="col-6">
-                        <input id="detune" type="range" class="form-control-range form-control" min="0" max="1000" step="1" value="0">
+                        <input id="detune" type="range" class="form-control-range form-control" min="0" max="1000"
+                            step="1" value="0">
                     </div>
                     <label id="detune-value" class="col-2 col-form-label col-form-label-sm text-nowrap">0</label>
                 </div>
@@ -100,10 +121,11 @@
                                         Ativo
                                         (s):</label>
                                     <div class="col-6">
-                                        <input id="tempoAtivo" type="range" class="form-control-range form-control" min="0" max="10"
-                                            step="0.1" value="1.0">
+                                        <input id="tempoAtivo" type="range" class="form-control-range form-control"
+                                            min="0" max="10" step="0.1" value="1.0">
                                     </div>
-                                    <label id="tempoAtivo-value" class="col-2 col-form-label col-form-label-sm text-nowrap">0</label>
+                                    <label id="tempoAtivo-value"
+                                        class="col-2 col-form-label col-form-label-sm text-nowrap">0</label>
                                 </div>
                                 <div class="form-group row col-sm-6 col-12">
                                     <label for="tempoInativo"
@@ -111,10 +133,11 @@
                                         Inativo
                                         (s):</label>
                                     <div class="col-6">
-                                        <input id="tempoInativo" type="range" class="form-control-range form-control" min="0" max="10"
-                                            step="0.1" value="0.0">
+                                        <input id="tempoInativo" type="range" class="form-control-range form-control"
+                                            min="0" max="10" step="0.1" value="0.0">
                                     </div>
-                                    <label id="tempoInativo-value" class="col-2 col-form-label col-form-label-sm text-nowrap">0</label>
+                                    <label id="tempoInativo-value"
+                                        class="col-2 col-form-label col-form-label-sm text-nowrap">0</label>
                                 </div>
                             </div>
                         </div>
